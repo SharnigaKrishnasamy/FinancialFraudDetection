@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>AI Fraud Detection System</title>
+    <style>
+        body {
+            font-family: Arial;
+            background: linear-gradient(135deg, #141e30, #243b55);
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            width: 420px;
+            padding: 25px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.5);
+        }
+
+        h2 {
+            text-align: center;
+            color: #00d4ff;
+        }
+
+        .form-group {
+            text-align: left;
+            margin-bottom: 12px;
+        }
+
+        label {
+            font-size: 14px;
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border-radius: 6px;
+            border: none;
+            font-size: 14px;
+            box-sizing: border-box; /* 🔥 important fix */
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            margin-top: 15px;
+            background: #00d4ff;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        button:hover {
+            background: #00aacc;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+    <h2>💳 AI Fraud Detection</h2>
+
+    <form method="POST">
+
+        <div class="form-group">
+            <label>Transaction Amount</label>
+            <input type="number" name="amount" required>
+        </div>
+
+        <div class="form-group">
+            <label>Transaction Type</label>
+            <select name="type" required>
+                <option value="">Select</option>
+                <option value="transfer">Transfer</option>
+                <option value="payment">Payment</option>
+                <option value="cashout">Cash-Out</option>
+                <option value="debit">Debit</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Transaction Hour (0–23)</label>
+            <input type="number" name="time" min="0" max="23" required>
+        </div>
+
+        <div class="form-group">
+            <label>Account Age (days)</label>
+            <input type="number" name="age" required>
+        </div>
+
+        <div class="form-group">
+            <label>Transactions in Last 24 hrs</label>
+            <input type="number" name="freq" required>
+        </div>
+
+        <div class="form-group">
+            <label>Device Type</label>
+            <select name="device" required>
+                <option value="">Select</option>
+                <option value="mobile">Mobile</option>
+                <option value="web">Web</option>
+                <option value="atm">ATM</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Location Consistency</label>
+            <select name="location" required>
+                <option value="">Select</option>
+                <option value="same">Same Location</option>
+                <option value="different">Different Location</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Website URL (Optional)</label>
+            <input type="text" name="url">
+        </div>
+
+        <button type="submit">🔍 Check Fraud</button>
+
+    </form>
+</div>
+
+</body>
+</html>
