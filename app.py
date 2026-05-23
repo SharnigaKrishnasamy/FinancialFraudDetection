@@ -1,43 +1,57 @@
 from flask import Flask, render_template, request
 import numpy as np
-from predict import predict_transaction
+from predict import hybrid_predict
 
 app = Flask(__name__)
 
-def check_url(url):
-    suspicious_keywords = ["secure", "verify", "login", "update", ".xyz", ".ru"]
-    for word in suspicious_keywords:
-        if word in url.lower():
-            return "⚠️ Suspicious URL detected"
-    return "✅ URL looks safe"
+type_map = {"transfer": 0, "payment": 1, "debit": 2}
+device_map = {"mobile": 0, "web": 1}
+location_map = {"same": 0, "different": 1}
 
 @app.route("/", methods=["GET", "POST"])
 def home():
+
+    prediction_text = ""
+    risk_value = 0
+
     if request.method == "POST":
-        amount = float(request.form.get("amount", 0))
-        oldbalanceOrg = float(request.form.get("oldbalanceOrg", 0))
-        newbalanceOrig = float(request.form.get("newbalanceOrig", 0))
+        try:
+            amount = float(request.form.get("amount", 0))
+            tx_type = type_map.get(request.form.get("type", ""), 0)
+            time = float(request.form.get("time", 0))
+            freq = float(request.form.get("freq", 0))
+            device = device_map.get(request.form.get("device", ""), 0)
+            location = location_map.get(request.form.get("location", ""), 0)
+            url = request.form.get("url", "")
 
-        oldbalanceDest = 0
-        newbalanceDest = amount
+            # ✅ FIXED FEATURE VECTOR (meaningful, not random padding)
+            features = np.array([
+                amount,
+                tx_type,
+                time,
+                freq,
+                device,
+                location,
+                len(url),
+                url.count("."),
+                sum(c.isdigit() for c in url),
+                1 if "http" in url else 0
+            ] + [0]*20)
 
-        url = request.form.get("url", "")
+            prediction, risk_value = hybrid_predict(features, url)
 
-        values = [amount, oldbalanceOrg, newbalanceOrig, oldbalanceDest, newbalanceDest]
-        while len(values) < 30:
-            values.append(0)
+            if prediction == 1:
+                prediction_text = "🚨 FRAUDULENT TRANSACTION DETECTED"
+            else:
+                prediction_text = "✅ LEGITIMATE TRANSACTION"
 
-        values = np.array(values)
+        except Exception as e:
+            prediction_text = f"Error: {str(e)}"
+            risk_value = 0
 
-        prob, result = predict_transaction(values)
-        url_result = check_url(url)
-
-        return render_template("index.html",
-                               result=result,
-                               prob=round(prob * 100, 2),
-                               url_result=url_result)
-
-    return render_template("index.html")
+    return render_template("index.html",
+                           prediction_text=prediction_text,
+                           risk_value=risk_value)
 
 if __name__ == "__main__":
-    app.run(debug=True, port=5001)
+    app.run(debug=True, port=8000)

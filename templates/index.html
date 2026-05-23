@@ -43,7 +43,7 @@
             border-radius: 6px;
             border: none;
             font-size: 14px;
-            box-sizing: border-box; /* 🔥 important fix */
+            box-sizing: border-box;
         }
 
         button {
@@ -59,6 +59,12 @@
 
         button:hover {
             background: #00aacc;
+        }
+
+        .result {
+            margin-top: 15px;
+            text-align: center;
+            font-weight: bold;
         }
     </style>
 </head>
@@ -81,7 +87,6 @@
                 <option value="">Select</option>
                 <option value="transfer">Transfer</option>
                 <option value="payment">Payment</option>
-                <option value="cashout">Cash-Out</option>
                 <option value="debit">Debit</option>
             </select>
         </div>
@@ -89,11 +94,6 @@
         <div class="form-group">
             <label>Transaction Hour (0–23)</label>
             <input type="number" name="time" min="0" max="23" required>
-        </div>
-
-        <div class="form-group">
-            <label>Account Age (days)</label>
-            <input type="number" name="age" required>
         </div>
 
         <div class="form-group">
@@ -107,7 +107,6 @@
                 <option value="">Select</option>
                 <option value="mobile">Mobile</option>
                 <option value="web">Web</option>
-                <option value="atm">ATM</option>
             </select>
         </div>
 
@@ -121,13 +120,19 @@
         </div>
 
         <div class="form-group">
-            <label>Website URL (Optional)</label>
+            <label>Website URL </label>
             <input type="text" name="url">
         </div>
 
         <button type="submit">🔍 Check Fraud</button>
-
     </form>
+
+    {% if prediction_text %}
+    <div class="result">
+        {{ prediction_text }} <br>
+        Risk Score: {{ risk_value }}%
+    </div>
+    {% endif %}
 </div>
 
 </body>
